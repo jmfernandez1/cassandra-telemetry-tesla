@@ -3,7 +3,7 @@ CREATE KEYSPACE IF NOT EXISTS tesla WITH REPLICATION = { 'class' : 'SimpleStrate
 
 -- Create a table
 CREATE TABLE IF NOT EXISTS tesla.event (
-id text PRIMARY KEY,
+id uuid PRIMARY KEY,
 name text,
 value text,
 last_update_timestamp timestamp

@@ -8,6 +8,7 @@ models.setDirectory( __dirname + '/models').bind(
        clientOptions: {
            contactPoints: ['127.0.0.1'],
            keyspace: 'tesla',
+           localDataCenter: 'datacenter1',
            queryOptions: {consistency: models.consistencies.one}
        },
        ormOptions: {
@@ -24,9 +25,9 @@ models.setDirectory( __dirname + '/models').bind(
 );
 
 app.get('/event/create/:name/:value', function(req, res) {
-    var event = new models.instance.event({
+    var event = new models.instance.Event({
         name: req.params.name,
-        id: uuid(),
+        id: uuid().toString(),
         value: req.params.value,
         last_update_timestamp: Date.now()
     });
@@ -35,14 +36,17 @@ app.get('/event/create/:name/:value', function(req, res) {
             console.log(err);
             return;
         }
+        res.send(event);
         console.log('event saved!');
     });
 });
 
-app.get('/events', function(req, res) {
-    models.instance.Event.find(function(err, events){
+app.get('/events/:name', function (req, res) {
+    models.instance.Event.find({name: req.params.name},{allow_filtering: true}, function(err, events){
         if(err) throw err;
         console.log('Found ', events);
         res.json(events)
     });
 });
+
+app.listen(3000);
